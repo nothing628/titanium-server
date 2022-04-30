@@ -1,0 +1,21 @@
+version: "3.5"
+services:
+  db:
+    image: postgres:11
+    environment:
+      - POSTGRES_USER=titanium
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=titanium
+      - PGDATA=/var/lib/postgresql/data
+    networks:
+      - titanium_network
+    volumes:
+      - pgsqldata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+networks:
+  titanium_network:
+
+volumes:
+  pgsqldata:
