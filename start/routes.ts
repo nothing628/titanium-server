@@ -35,6 +35,7 @@ Route.group(() => {
   Route.get('/', 'MangaController.listManga')
   Route.get(':id', 'MangaController.showManga')
   Route.patch(':id', 'MangaController.updateManga').middleware('auth')
+  Route.delete(':id', 'MangaController.deleteManga').middleware('auth')
 }).prefix('/mangas')
 
 Route.get('/', async () => {

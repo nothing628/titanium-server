@@ -251,4 +251,32 @@ test.group('/mangas/:id - Manga crud', () => {
 
     response.assertStatus(401)
   })
+
+  test('can delete manga', async ({ client, assert }) => {
+    const testManga = await Manga.firstOrFail()
+    const user = await User.firstOrFail()
+    const response = await client.delete('/mangas/' + testManga.id).loginAs(user)
+
+    response.assertStatus(204)
+
+    const afterDeleteManga = await Manga.find(testManga.id)
+
+    assert.isNull(afterDeleteManga)
+  })
+
+  test('throw 404 when try to delete non-exists manga', async ({ client }) => {
+    const user = await User.firstOrFail()
+    const response = await client
+      .delete('/mangas/3136b941-2f14-493d-9d3c-c070a8784422')
+      .loginAs(user)
+
+    response.assertStatus(404)
+  })
+
+  test('throw 401 when try to delete without access token', async ({ client }) => {
+    const testManga = await Manga.firstOrFail()
+    const response = await client.delete('/mangas/' + testManga.id)
+
+    response.assertStatus(401)
+  })
 })

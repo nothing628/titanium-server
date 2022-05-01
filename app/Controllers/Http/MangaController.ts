@@ -67,4 +67,14 @@ export default class MangaController {
       },
     }
   }
+
+  public async deleteManga({ params, response }: HttpContextContract) {
+    const mangaId = params.id
+    const manga = await Manga.findOrFail(mangaId)
+
+    await manga.delete()
+
+    response.status(204)
+    return {}
+  }
 }
