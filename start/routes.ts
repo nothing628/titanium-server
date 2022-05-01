@@ -29,6 +29,11 @@ Route.get('health', async ({ response }) => {
 
 Route.post('/auth', 'AuthController.loginUser')
 Route.get('/auth/me', 'AuthController.getMe').middleware('auth')
+
+Route.group(() => {
+  Route.post('/', 'MangaController.storeManga').middleware('auth')
+}).prefix('/mangas')
+
 Route.get('/', async () => {
   return { hello: 'world' }
 })

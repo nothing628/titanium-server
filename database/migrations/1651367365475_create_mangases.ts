@@ -8,8 +8,8 @@ export default class Mangas extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').primary().defaultTo(this.raw("uuid_generate_v4()"))
 
-      table.string('title', 500)
-      table.string('description', 1024)
+      table.string('title', 500).notNullable()
+      table.string('description', 1024).notNullable()
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
