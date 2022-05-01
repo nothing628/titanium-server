@@ -1,4 +1,5 @@
 import { test } from '@japa/runner'
+import Database from '@ioc:Adonis/Lucid/Database'
 import Manga from 'App/Models/Manga'
 import User from 'App/Models/User'
 
@@ -97,5 +98,25 @@ test.group('/mangas/:id - Manga crud', () => {
       .loginAs(user)
 
     response.assertStatus(422)
+  })
+
+  test('can list manga', async ({ client, assert }) => {
+    const countQueryResult = await Database.from(Manga.table).count('id')
+    const countData = parseInt(countQueryResult[0].count)
+    const response = await client.get('/mangas').qs({
+      page: 1,
+      perPage: 15,
+    })
+
+    response.assertStatus(200)
+
+    const responseBody = response.body()
+
+    assert.properties(responseBody, ['page', 'perPage', 'total', 'data'])
+    assert.propertyVal(responseBody, 'page', 1)
+    assert.propertyVal(responseBody, 'perPage', 15)
+    assert.propertyVal(responseBody, 'total', countData)
+
+    // TODO: assert data content
   })
 })

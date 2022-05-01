@@ -21,4 +21,17 @@ export default class MangaController {
       },
     }
   }
+
+  public async listManga({ request }: HttpContextContract) {
+    const page = request.input('page')
+    const perPage = request.input('perPage')
+    const mangaResult = await Manga.query().paginate(page, perPage)
+
+    return {
+      page: parseInt(page),
+      perPage: parseInt(perPage),
+      total: mangaResult.total,
+      data: mangaResult.all(),
+    }
+  }
 }
