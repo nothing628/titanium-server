@@ -34,6 +34,7 @@ Route.group(() => {
   Route.post('/', 'MangaController.storeManga').middleware('auth')
   Route.get('/', 'MangaController.listManga')
   Route.get(':id', 'MangaController.showManga')
+  Route.patch(':id', 'MangaController.updateManga').middleware('auth')
 }).prefix('/mangas')
 
 Route.get('/', async () => {

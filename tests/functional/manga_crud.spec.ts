@@ -1,4 +1,5 @@
 import { test } from '@japa/runner'
+import { faker } from '@faker-js/faker'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Manga from 'App/Models/Manga'
 import User from 'App/Models/User'
@@ -192,5 +193,62 @@ test.group('/mangas/:id - Manga crud', () => {
     const response = await client.get('/mangas/3136b941-2f14-493d-9d3c-c070a8784422')
 
     response.assertStatus(404)
+  })
+
+  test('can update manga', async ({ client, assert }) => {
+    const testManga = await Manga.firstOrFail()
+    const user = await User.firstOrFail()
+    const newTitle = faker.commerce.productName()
+    const newDescription = faker.commerce.productDescription()
+    const response = await client
+      .patch('/mangas/' + testManga.id)
+      .json({
+        title: newTitle,
+        description: newDescription,
+      })
+      .loginAs(user)
+
+    response.assertStatus(200)
+
+    const responseBody = response.body()
+
+    assert.properties(responseBody, ['manga'])
+    assert.properties(responseBody.manga, ['id', 'title', 'description'])
+
+    assert.propertyVal(responseBody.manga, 'id', testManga.id)
+    assert.propertyVal(responseBody.manga, 'title', newTitle)
+    assert.propertyVal(responseBody.manga, 'description', newDescription)
+
+    await testManga.refresh()
+
+    assert.equal(testManga.title, newTitle)
+    assert.equal(testManga.description, newDescription)
+  })
+
+  test('throw 404 when try update non-exists manga', async ({ client }) => {
+    const user = await User.firstOrFail()
+    const newTitle = faker.commerce.productName()
+    const newDescription = faker.commerce.productDescription()
+    const response = await client
+      .patch('/mangas/3136b941-2f14-493d-9d3c-c070a8784422')
+      .json({
+        title: newTitle,
+        description: newDescription,
+      })
+      .loginAs(user)
+
+    response.assertStatus(404)
+  })
+
+  test('throw 401 when try update without access token', async ({ client }) => {
+    const testManga = await Manga.firstOrFail()
+    const newTitle = faker.commerce.productName()
+    const newDescription = faker.commerce.productDescription()
+    const response = await client.patch('/mangas/' + testManga.id).json({
+      title: newTitle,
+      description: newDescription,
+    })
+
+    response.assertStatus(401)
   })
 })

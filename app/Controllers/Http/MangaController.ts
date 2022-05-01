@@ -47,4 +47,24 @@ export default class MangaController {
       },
     }
   }
+
+  public async updateManga({ params, request }: HttpContextContract) {
+    const mangaId = params.id
+    const manga = await Manga.findOrFail(mangaId)
+    const newTitle = request.input('title')
+    const newDescription = request.input('description')
+
+    manga.title = newTitle
+    manga.description = newDescription
+
+    await manga.save()
+
+    return {
+      manga: {
+        id: mangaId,
+        title: newTitle,
+        description: newDescription,
+      },
+    }
+  }
 }
