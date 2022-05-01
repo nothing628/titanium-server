@@ -34,4 +34,17 @@ export default class MangaController {
       data: mangaResult.all(),
     }
   }
+
+  public async showManga({ params }: HttpContextContract) {
+    const mangaId = params.id
+    const manga = await Manga.findOrFail(mangaId)
+
+    return {
+      manga: {
+        id: mangaId,
+        title: manga.title,
+        description: manga.description,
+      },
+    }
+  }
 }

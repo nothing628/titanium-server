@@ -33,6 +33,7 @@ Route.get('/auth/me', 'AuthController.getMe').middleware('auth')
 Route.group(() => {
   Route.post('/', 'MangaController.storeManga').middleware('auth')
   Route.get('/', 'MangaController.listManga')
+  Route.get(':id', 'MangaController.showManga')
 }).prefix('/mangas')
 
 Route.get('/', async () => {

@@ -173,4 +173,24 @@ test.group('/mangas/:id - Manga crud', () => {
       ])
     }
   })
+
+  test('can show manga', async ({ client, assert }) => {
+    const testManga = await Manga.first()
+    const response = await client.get('/mangas/' + testManga?.id)
+
+    response.assertStatus(200)
+
+    const responseBody = response.body()
+    assert.properties(responseBody, ['manga'])
+    assert.properties(responseBody.manga, ['id', 'title', 'description'])
+    assert.propertyVal(responseBody.manga, 'id', testManga?.id)
+    assert.propertyVal(responseBody.manga, 'title', testManga?.title)
+    assert.propertyVal(responseBody.manga, 'description', testManga?.description)
+  })
+
+  test('throw 404 when show non-exists manga', async ({ client }) => {
+    const response = await client.get('/mangas/3136b941-2f14-493d-9d3c-c070a8784422')
+
+    response.assertStatus(404)
+  })
 })
