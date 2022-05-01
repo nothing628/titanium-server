@@ -3,6 +3,6 @@ import { MangaFactory } from 'Database/factories'
 
 export default class MangaSeederSeeder extends BaseSeeder {
   public async run() {
-    await MangaFactory.createMany(100)
+    await MangaFactory.with('pages', 4).createMany(100)
   }
 }

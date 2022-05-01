@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
+import Page from 'App/Models/Page'
 
 export default class Manga extends BaseModel {
   public static table = 'mangas'
@@ -18,4 +19,7 @@ export default class Manga extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @hasMany(() => Page)
+  public pages: HasMany<typeof Page>
 }

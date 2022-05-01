@@ -36,7 +36,15 @@ Route.group(() => {
   Route.get(':id', 'MangaController.showManga')
   Route.patch(':id', 'MangaController.updateManga').middleware('auth')
   Route.delete(':id', 'MangaController.deleteManga').middleware('auth')
+
+  Route.get(':id/pages', 'PagesController.getMangaPage')
 }).prefix('/mangas')
+
+Route.group(() => {
+  Route.post('/', 'PagesController.storePage').middleware('auth')
+  Route.patch(':id', 'PagesController.updatePage').middleware('auth')
+  Route.delete(':id', 'PagesController.deletePage').middleware('auth')
+}).prefix('/pages')
 
 Route.get('/', async () => {
   return { hello: 'world' }

@@ -15,7 +15,7 @@ export default class Pages extends BaseSchema {
        */
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
-      table.foreign('manga_id').references('id').inTable('mangas')
+      table.foreign('manga_id').references('id').inTable('mangas').onDelete('cascade')
     })
   }
 
