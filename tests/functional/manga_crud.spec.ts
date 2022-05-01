@@ -100,12 +100,61 @@ test.group('/mangas/:id - Manga crud', () => {
     response.assertStatus(422)
   })
 
-  test('can list manga', async ({ client, assert }) => {
+  test('can list manga (default)', async ({ client, assert }) => {
     const countQueryResult = await Database.from(Manga.table).count('id')
     const countData = parseInt(countQueryResult[0].count)
+    const testMangas = await Manga.query().paginate(1)
+    const response = await client.get('/mangas').qs({})
+
+    response.assertStatus(200)
+
+    const responseBody = response.body()
+
+    assert.properties(responseBody, ['page', 'perPage', 'total', 'data'])
+    assert.propertyVal(responseBody, 'page', 1)
+    assert.propertyVal(responseBody, 'perPage', 20)
+    assert.propertyVal(responseBody, 'total', countData)
+    assert.lengthOf(responseBody.data, 20)
+
+    for (const testManga of testMangas.all()) {
+      assert.containsSubset(responseBody.data, [
+        { id: testManga?.id, title: testManga?.title, description: testManga?.description },
+      ])
+    }
+  })
+
+  test('can list manga (next page)', async ({ client, assert }) => {
+    const countQueryResult = await Database.from(Manga.table).count('id')
+    const countData = parseInt(countQueryResult[0].count)
+    const testMangas = await Manga.query().paginate(2)
+    const response = await client.get('/mangas').qs({
+      page: 2,
+    })
+
+    response.assertStatus(200)
+
+    const responseBody = response.body()
+
+    assert.properties(responseBody, ['page', 'perPage', 'total', 'data'])
+    assert.propertyVal(responseBody, 'page', 2)
+    assert.propertyVal(responseBody, 'perPage', 20)
+    assert.propertyVal(responseBody, 'total', countData)
+    assert.lengthOf(responseBody.data, 20)
+
+    for (const testManga of testMangas.all()) {
+      assert.containsSubset(responseBody.data, [
+        { id: testManga?.id, title: testManga?.title, description: testManga?.description },
+      ])
+    }
+  })
+
+  test('can list manga (custom perPage)', async ({ client, assert }) => {
+    const countQueryResult = await Database.from(Manga.table).count('id')
+    const countData = parseInt(countQueryResult[0].count)
+    const testMangas = await Manga.query().paginate(1, 10)
     const response = await client.get('/mangas').qs({
       page: 1,
-      perPage: 15,
+      perPage: 10,
     })
 
     response.assertStatus(200)
@@ -114,9 +163,14 @@ test.group('/mangas/:id - Manga crud', () => {
 
     assert.properties(responseBody, ['page', 'perPage', 'total', 'data'])
     assert.propertyVal(responseBody, 'page', 1)
-    assert.propertyVal(responseBody, 'perPage', 15)
+    assert.propertyVal(responseBody, 'perPage', 10)
     assert.propertyVal(responseBody, 'total', countData)
+    assert.lengthOf(responseBody.data, 10)
 
-    // TODO: assert data content
+    for (const testManga of testMangas.all()) {
+      assert.containsSubset(responseBody.data, [
+        { id: testManga?.id, title: testManga?.title, description: testManga?.description },
+      ])
+    }
   })
 })

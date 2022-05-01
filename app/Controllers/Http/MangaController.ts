@@ -23,13 +23,13 @@ export default class MangaController {
   }
 
   public async listManga({ request }: HttpContextContract) {
-    const page = request.input('page')
+    const page = request.input('page') || 1
     const perPage = request.input('perPage')
     const mangaResult = await Manga.query().paginate(page, perPage)
 
     return {
-      page: parseInt(page),
-      perPage: parseInt(perPage),
+      page: mangaResult.currentPage,
+      perPage: mangaResult.perPage,
       total: mangaResult.total,
       data: mangaResult.all(),
     }
