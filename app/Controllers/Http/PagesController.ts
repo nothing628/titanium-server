@@ -50,7 +50,7 @@ export default class PagesController {
     const pageId = params.id
     const page = await Page.findOrFail(pageId)
 
-    page.pageOrder = page_order;
+    page.pageOrder = page_order
     await page.save()
 
     return {
@@ -63,5 +63,13 @@ export default class PagesController {
     }
   }
 
-  public async deletePage() {}
+  public async deletePage({ params, response }: HttpContextContract) {
+    const pageId = params.id
+    const page = await Page.findOrFail(pageId)
+
+    await page.delete()
+
+    response.status(204)
+    return {}
+  }
 }

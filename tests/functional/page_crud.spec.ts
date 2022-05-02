@@ -146,4 +146,30 @@ test.group('Page crud', () => {
 
     response.assertStatus(401)
   })
+
+  test('can delete page', async ({ client, assert }) => {
+    const testPage = await Page.firstOrFail()
+    const testUser = await User.firstOrFail()
+    const response = await client.delete('/pages/' + testPage.id).loginAs(testUser)
+
+    response.assertStatus(204)
+
+    const currentPage = await Page.find(testPage.id)
+    assert.isNull(currentPage)
+  })
+
+  test('throw 404 when try delete non-exists page', async ({client}) => {
+    const pageId = '3136b941-2f14-493d-9d3c-c070a8784422'
+    const testUser = await User.firstOrFail()
+    const response = await client.delete('/pages/' + pageId).loginAs(testUser)
+
+    response.assertStatus(404)
+  })
+
+  test('throw 401 when try delete page without access token', async ({ client }) => {
+    const testPage = await Page.firstOrFail()
+    const response = await client.delete('/pages/' + testPage.id)
+
+    response.assertStatus(401)
+  })
 })
