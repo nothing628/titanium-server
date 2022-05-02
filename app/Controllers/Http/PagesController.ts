@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Application from '@ioc:Adonis/Core/Application'
 import CreatePageValidator from 'App/Validators/CreatePageValidator'
+import UpdatePageValidator from 'App/Validators/UpdatePageValidator'
 import Manga from 'App/Models/Manga'
 import Page from 'App/Models/Page'
 import { generateFilename } from '../../helper'
@@ -43,7 +44,24 @@ export default class PagesController {
     }
   }
 
-  public async updatePage() {}
+  public async updatePage({ params, request }: HttpContextContract) {
+    const input = await request.validate(UpdatePageValidator)
+    const { page_order } = input
+    const pageId = params.id
+    const page = await Page.findOrFail(pageId)
+
+    page.pageOrder = page_order;
+    await page.save()
+
+    return {
+      page: {
+        id: pageId,
+        manga_id: page.mangaId,
+        page_order: page_order,
+        page_path: page.pagePath,
+      },
+    }
+  }
 
   public async deletePage() {}
 }

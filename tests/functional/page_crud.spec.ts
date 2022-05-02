@@ -81,7 +81,7 @@ test.group('Page crud', () => {
   })
 
   test('throw 404 when try upload with non-exists manga', async ({ client }) => {
-    const randomUuid = "3136b941-2f14-493d-9d3c-c070a8784422"
+    const randomUuid = '3136b941-2f14-493d-9d3c-c070a8784422'
     const testUser = await User.firstOrFail()
     const response = await client
       .post('/pages')
@@ -91,5 +91,59 @@ test.group('Page crud', () => {
       .loginAs(testUser)
 
     response.assertStatus(404)
+  })
+
+  test('can update page', async ({ client, assert }) => {
+    const testPage = await Page.firstOrFail()
+    const testUser = await User.firstOrFail()
+    const response = await client
+      .patch('/pages/' + testPage.id)
+      .json({
+        page_order: 888,
+      })
+      .loginAs(testUser)
+
+    response.assertStatus(200)
+    const responseBody = response.body()
+
+    assert.properties(responseBody, ['page'])
+    assert.properties(responseBody.page, ['id', 'page_order', 'page_path', 'manga_id'])
+
+    await testPage.refresh()
+
+    assert.equal(testPage.pageOrder, 888)
+    assert.propertyVal(responseBody.page, 'id', testPage.id)
+    assert.propertyVal(responseBody.page, 'page_order', 888)
+    assert.propertyVal(responseBody.page, 'page_path', testPage.pagePath)
+    assert.propertyVal(responseBody.page, 'manga_id', testPage.mangaId)
+  })
+
+  test('throw 422 when try update page with invalid request body', async ({ client }) => {
+    const testPage = await Page.firstOrFail()
+    const testUser = await User.firstOrFail()
+    const response = await client
+      .patch('/pages/' + testPage.id)
+      .json({})
+      .loginAs(testUser)
+
+    response.assertStatus(422)
+  })
+
+  test('throw 404 when try update non-exists page', async ({ client }) => {
+    const pageId = '3136b941-2f14-493d-9d3c-c070a8784422'
+    const testUser = await User.firstOrFail()
+    const response = await client
+      .patch('/pages/' + pageId)
+      .json({ page_order: 888 })
+      .loginAs(testUser)
+
+    response.assertStatus(404)
+  })
+
+  test('throw 401 when try update page without access token', async ({ client }) => {
+    const testPage = await Page.firstOrFail()
+    const response = await client.patch('/pages/' + testPage.id).json({ page_order: 888 })
+
+    response.assertStatus(401)
   })
 })
