@@ -3,6 +3,7 @@ import Application from '@ioc:Adonis/Core/Application'
 import CreatePageValidator from 'App/Validators/CreatePageValidator'
 import Manga from 'App/Models/Manga'
 import Page from 'App/Models/Page'
+import { generateFilename } from '../../helper'
 
 export default class PagesController {
   public async getMangaPage({ params }: HttpContextContract) {
@@ -19,8 +20,9 @@ export default class PagesController {
     const { file, manga_id, page_order } = input
     await Manga.findOrFail(manga_id)
     const fileExts = file.extname
+    const fileName = generateFilename(fileExts)
 
-    await file.move(Application.tmpPath('uploads'))
+    await file.move(Application.tmpPath('uploads'), { name: fileName })
 
     const pagePath = file.filePath
     const newPage = await Page.create({
