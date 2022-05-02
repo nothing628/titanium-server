@@ -5,6 +5,7 @@ import Page from 'App/Models/Page'
 export const PageFactory = Factory.define(Page, ({ faker }) => {
   return {
     pageOrder: faker.datatype.number({ min: 1, max: 100 }),
+    pagePath: faker.system.filePath(),
   }
 }).build()
 
