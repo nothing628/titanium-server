@@ -36,9 +36,11 @@ Route.post('/uploads', async ({ request }) => {
   })
 
   if (currentFile) {
-    console.log(currentFile)
     // await currentFile.move(Application.startPath('uploads'))
     await currentFile.move(Application.tmpPath('uploads'))
+
+    const filePath = currentFile.filePath
+    console.log(filePath)
   }
 })
 

@@ -12,6 +12,9 @@ export default class Page extends BaseModel {
   @column()
   public pageOrder: number
 
+  @column()
+  public pagePath: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

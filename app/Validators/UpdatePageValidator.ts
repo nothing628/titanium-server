@@ -1,4 +1,4 @@
-import { schema } from '@ioc:Adonis/Core/Validator'
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class UpdatePageValidator {
@@ -23,7 +23,9 @@ export default class UpdatePageValidator {
    *     ])
    *    ```
    */
-  public schema = schema.create({})
+  public schema = schema.create({
+    page_order: schema.number([rules.unsigned()]),
+  })
 
   /**
    * Custom messages for validation failures. You can make use of dot notation `(.)`

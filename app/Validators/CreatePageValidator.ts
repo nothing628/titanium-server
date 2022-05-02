@@ -1,4 +1,4 @@
-import { schema } from '@ioc:Adonis/Core/Validator'
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class CreatePageValidator {
@@ -23,7 +23,11 @@ export default class CreatePageValidator {
    *     ])
    *    ```
    */
-  public schema = schema.create({})
+  public schema = schema.create({
+    file: schema.file({ extnames: ['jpg', 'png'], size: '3mb' }),
+    manga_id: schema.string([rules.uuid()]),
+    page_order: schema.number([rules.unsigned()]),
+  })
 
   /**
    * Custom messages for validation failures. You can make use of dot notation `(.)`

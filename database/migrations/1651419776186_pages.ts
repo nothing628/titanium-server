@@ -9,6 +9,7 @@ export default class Pages extends BaseSchema {
       table.uuid('manga_id').notNullable()
 
       table.integer('page_order').notNullable()
+      table.string('page_path', 1024).notNullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
