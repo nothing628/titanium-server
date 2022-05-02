@@ -20,6 +20,7 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
+import Application from '@ioc:Adonis/Core/Application'
 
 Route.get('health', async ({ response }) => {
   const report = await HealthCheck.getReport()
@@ -29,6 +30,17 @@ Route.get('health', async ({ response }) => {
 
 Route.post('/auth', 'AuthController.loginUser')
 Route.get('/auth/me', 'AuthController.getMe').middleware('auth')
+Route.post('/uploads', async ({ request }) => {
+  const currentFile = request.file('file', {
+    extnames: ['jpg', 'png'],
+  })
+
+  if (currentFile) {
+    console.log(currentFile)
+    // await currentFile.move(Application.startPath('uploads'))
+    await currentFile.move(Application.tmpPath('uploads'))
+  }
+})
 
 Route.group(() => {
   Route.post('/', 'MangaController.storeManga').middleware('auth')
