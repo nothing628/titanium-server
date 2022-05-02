@@ -30,6 +30,7 @@ Route.get('health', async ({ response }) => {
 
 Route.post('/auth', 'AuthController.loginUser')
 Route.get('/auth/me', 'AuthController.getMe').middleware('auth')
+Route.post('/auth/logout', 'AuthController.logoutUser').middleware('auth')
 Route.post('/uploads', async ({ request }) => {
   const currentFile = request.file('file', {
     extnames: ['jpg', 'png'],

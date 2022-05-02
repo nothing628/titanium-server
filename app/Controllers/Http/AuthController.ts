@@ -12,7 +12,7 @@ export default class AuthController {
 
     // Verify password
     // if (!(await Hash.verify(user.password, password))) {
-      // return response.badRequest('Invalid credentials')
+    // return response.badRequest('Invalid credentials')
     // }
 
     // Generate token
@@ -30,6 +30,14 @@ export default class AuthController {
 
     return {
       user: currentUser,
+    }
+  }
+
+  public async logoutUser({ auth }: HttpContextContract) {
+    await auth.use('api').revoke()
+
+    return {
+      revoked: true,
     }
   }
 }
